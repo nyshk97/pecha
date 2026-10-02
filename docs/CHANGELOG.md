@@ -44,6 +44,8 @@ Pecha の更新履歴。形式は [Keep a Changelog](https://keepachangelog.com/
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-02
+
 ### ✨ Added
 - 左 ⌘ + Space を押している間だけ録音し、離すと文字起こしして前面のアプリに貼り付ける（OS の音声認識・ja_JP）
 - 押した瞬間に開始音（Funk）、離したときに終了音（Bottle）。0.3 秒未満の押下は捨てる
