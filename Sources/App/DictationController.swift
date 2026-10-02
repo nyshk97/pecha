@@ -95,7 +95,7 @@ final class DictationController {
                     Log.write("asr.empty")
                     return
                 }
-                Paster.paste(text, label: "dictation")
+                Paster.pasteAndKeep(text, label: "dictation")
             } catch {
                 Log.write("asr.failed error=\(error)")
                 self.hud.showError("文字起こしに失敗しました")

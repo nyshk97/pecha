@@ -30,6 +30,12 @@ enum Clipboard {
         return general.changeCount
     }
 
+    /// 普通のコピーとして置く（クリップボード管理アプリの履歴にも残る）
+    static func put(_ text: String) {
+        general.clearContents()
+        general.setString(text, forType: .string)
+    }
+
     static func clearForCopy() -> Int {
         general.clearContents()
         return general.changeCount
@@ -73,8 +79,16 @@ enum Clipboard {
     }
 }
 
-/// クリップボード経由で前面アプリに貼り付けて、元のクリップボードを戻す
+/// クリップボード経由で前面アプリに貼り付ける
 enum Paster {
+    /// 貼り付けて、本文をクリップボードに残す（貼り先に入力欄が無くても ⌘V でもう一度貼れる）
+    static func pasteAndKeep(_ text: String, label: String) {
+        Clipboard.put(text)
+        KeySynth.commandV()
+        Log.write("paste.done what=\(label) chars=\(text.count) kept=1")
+    }
+
+    /// 貼り付けて、元のクリップボードを戻す
     static func paste(_ text: String, label: String) {
         let snapshot = Clipboard.snapshot()
         let ours = Clipboard.putTransient(text)
