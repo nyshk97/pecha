@@ -72,7 +72,7 @@ targets:
         SUFeedURL: $(PECHA_SU_FEED_URL)
         SUEnableAutomaticChecks: true
         # keychain の Sparkle 鍵（account "pecha"）と対。generate_keys --account pecha の出力を書く
-        SUPublicEDKey: __SPARKLE_PUBLIC_KEY_NOT_SET__
+        SUPublicEDKey: U8I4QzHIUF7aypONdR0cCQNcqazHAhtdK1SYjyBsTJY=
   pechaTests:
     type: bundle.unit-test
     platform: macOS

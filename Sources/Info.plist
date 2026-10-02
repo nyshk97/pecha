@@ -40,6 +40,6 @@
 	<key>SUFeedURL</key>
 	<string>$(PECHA_SU_FEED_URL)</string>
 	<key>SUPublicEDKey</key>
-	<string>__SPARKLE_PUBLIC_KEY_NOT_SET__</string>
+	<string>U8I4QzHIUF7aypONdR0cCQNcqazHAhtdK1SYjyBsTJY=</string>
 </dict>
 </plist>
