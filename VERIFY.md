@@ -5,7 +5,7 @@
 ```bash
 mise run build          # Debug（Pecha Dev）。署名 xcconfig が無ければ ad-hoc で通る
 mise run build-release  # Release（Pecha）
-mise run test           # Sources/Core の純粋関数（ホットキーの状態遷移・辞書の読み込み・置き換え・追記・音量）
+mise run test           # Sources/Core の純粋関数（ホットキーの状態遷移・辞書の読み込み・置き換え・追記・音量）。辞書の読みの検査表は dictionary-reading: fixed= kept= known_miss= known_false_positive= を出す
 mise run run            # /Applications/Pecha Dev.app に置いて起動し直す（旧プロセスの終了を待つ。許可のダイアログが出る）
 ```
 
