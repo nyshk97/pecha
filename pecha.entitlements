@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- scripts/make-release-zip.sh の再署名でも同じファイルを渡すので、足すときはここ 1 箇所に書く -->
+	<!-- 録音のマイク。Release は Hardened Runtime なので、これが無いとマイクは黙って無音になる -->
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+</dict>
+</plist>
