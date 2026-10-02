@@ -44,6 +44,8 @@ Pecha の更新履歴。形式は [Keep a Changelog](https://keepachangelog.com/
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-10-02
+
 ### 📝 Changed
 - 音声入力の本文を貼り付け後もクリップボードに残すように（入力欄の無いところで話しても ⌘V で貼り直せる）
 
