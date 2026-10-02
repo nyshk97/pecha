@@ -44,6 +44,8 @@ Pecha の更新履歴。形式は [Keep a Changelog](https://keepachangelog.com/
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-02
+
 ### ✨ Added
 - 辞書の語を読みでも当てるように（「衣臭 => issue」で登録すれば「イシュー」も、「生ため => 生天目」なら「生田目」も直る）
 
