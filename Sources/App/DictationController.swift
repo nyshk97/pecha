@@ -33,8 +33,6 @@ final class DictationController {
     // MARK: - 録音 → 文字起こし → 貼り付け
 
     private func start() {
-        // 押した瞬間に鳴らす（鳴らなければキーが届いていない、と切り分けられる）
-        Sounds.playStart()
         Log.write("hotkey.down")
         dictionary.reload(when: "press")
         guard Recorder.permission == .authorized else {
@@ -76,7 +74,11 @@ final class DictationController {
                 self.onStateChange?()
                 return
             }
-            if current { self.hud.markLive() }
+            guard current else { return }
+            // 開始音はマイクが動き出してから鳴らす（ここから話した分が録音される合図）。押した瞬間に鳴らすと、
+            // 休止中のスピーカーを起こすのとマイクの起動が重なり（Studio Display は同じ USB 機器）、起動が約 400ms 延びる
+            Sounds.playStart()
+            self.hud.markLive()
         }
     }
 

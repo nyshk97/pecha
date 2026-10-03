@@ -63,7 +63,7 @@ pkill -x "Pecha Dev"
 - ⌘ を先に離しても Space のリピートが打ち込まれない
 - 誤認識を選択して右 ⌥ + 数字 → 正しい語を入れて Enter → その場で置き換わり、次の録音から直って出る
 - HUD と辞書パネルが、内蔵画面だけのとき・Studio Display を足した 2 枚のときの両方でマウスのある画面に出る
-- 押した瞬間に HUD が出る（点は灰色）→ マイクが動き出すと赤になる。Studio Display をつないでいて数秒空けた 1 回目でも、HUD が出るまで待たされない
+- 押した瞬間に HUD が出る（点は灰色）→ マイクが動き出すと赤になり、同時に開始音（Funk）が鳴る。Studio Display をつないでいて数秒空けた 1 回目でも、HUD が出るまで待たされない
 
 ## ログ
 
@@ -78,7 +78,7 @@ pkill -x "Pecha Dev"
 `dict.loaded entries=` / `dict.load_failed` / `dict.created` / `dict.add` / `dict.add_failed` / `dict.applied hits=` / `dict.replaced via=ax` / `dict.replace_ax_failed` /
 `update.started` / `update.disabled` / `login_item.registered` / `login_item.requires_approval` / `hook.transcribe`
 
-「押しても反応しない」ときは、開始音が鳴ったか（鳴らなければキーが届いていない）と、`tap.reenabled`・`secure_input.on`・`ax.trusted value=false` の有無を見る。
+「押しても反応しない」ときは、灰色の HUD が出たか（出なければキーが届いていない。開始音はマイクが動き出してから鳴る）と、`tap.reenabled`・`secure_input.on`・`ax.trusted value=false` の有無を見る。
 
 「押してから録音が始まるまで遅い」ときは、`hotkey.down` から `audio.started` までの差を押下ごとに見る（マイクの起動時間。内蔵マイクで約 130ms、
 USB の Studio Display のマイクで約 550ms）。`hotkey.up ms=` はタップがキーを見た時刻からの長さなので、`hotkey.up` の時刻から引くと

@@ -10,7 +10,7 @@ KeyVoice のうち使っている機能（押している間だけ録音 → 離
 - 辞書登録: 常用 右 ⌥ + 2 / dev 右 ⌥ + 3。選択テキストを取って（AX → Copy メニュー → 合成 ⌘C）パネルを出し、Enter で `dictionary.txt` の末尾に `誤 => 正` を追記、選択部分も置き換える
 - 辞書: `~/Library/CloudStorage/Dropbox/settings/pecha/dictionary.txt`（dev も同じ）。録音のたびに読み直す。書き込みは追記だけ、同じ「誤」は後の行が効く。認識後の置き換えで、文字列の完全一致に加えて「誤」「正」の読みでも当てる（`Sources/Core/DictionaryFile.swift` の `replace`・`Yomi.swift`。誤爆と取りこぼしは `Tests/DictionaryReadingTests.swift` の検査表で数える。実際に出た誤認識はそこに足す）。認識時のヒント（`contextualStrings`）・カスタム言語モデル・候補は効果が無かったので使わない（plan のログ）
 - ホットキーは `CGEventTap`（`.tailAppendEventTap`。keyrc が先に見られるように）。状態遷移は `Sources/Core/HotkeyMachine.swift` の純粋関数
-- 効果音: 押した瞬間 Funk、離したとき Bottle（`/System/Library/Sounds`）
+- 効果音: マイクが動き出したとき Funk、離したとき Bottle（`/System/Library/Sounds`）。押した瞬間には HUD を灰色の点で出し、マイクが動き出したら赤にする
 
 ## コマンド
 
