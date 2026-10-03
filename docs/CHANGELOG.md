@@ -44,6 +44,8 @@ Pecha の更新履歴。形式は [Keep a Changelog](https://keepachangelog.com/
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-03
+
 ### 🐛 Fixed
 - Studio Display（USBのスピーカー・マイク）につないでいると、数秒空けて押したときに録音が始まるまで約1秒かかっていたのを修正（約0.5秒に）
 - 録音の開始を待つあいだ、Mac全体のキー入力とHUDの表示が止まっていたのを修正
