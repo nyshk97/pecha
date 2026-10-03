@@ -57,19 +57,27 @@ final class DictationController {
             transcriber.prepare()
             return
         }
-        do {
-            try recorder.start(format: session.format) { buffer in session.append(buffer) }
-        } catch {
-            session.cancel()
-            Log.write("record.failed error=\(error)")
-            hud.showError("録音を始められません: \(error)")
-            return
-        }
+        // マイクの起動（USB のマイクで約 550ms）はメインを止めないよう Recorder のキューで待つ。
+        // その間に離されたら finish が録音を止める（Recorder のキューは直列なので、起動のあとに止まる）
         self.session = session
         recordStartedAt = CFAbsoluteTimeGetCurrent()
         hud.showRecording()
         Log.write("record.start")
         onStateChange?()
+        recorder.start(format: session.format, onBuffer: { buffer in session.append(buffer) }) { [weak self] error in
+            guard let self else { return }
+            let current = self.session === session
+            if let error {
+                Log.write("record.failed error=\(error) current=\(current)")
+                guard current else { return }
+                self.session = nil
+                session.cancel()
+                self.hud.showError("録音を始められません: \(error)")
+                self.onStateChange?()
+                return
+            }
+            if current { self.hud.markLive() }
+        }
     }
 
     private func finish(reason: StopReason, duration: Double, discard: Bool) {

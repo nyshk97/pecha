@@ -8,7 +8,7 @@ extension NSScreen {
     }
 }
 
-/// 録音中の表示（マウスのある画面の下の方に、録音中のマークと音量だけ）。エラーもここに短く出す。
+/// 録音中の表示（マウスのある画面の下の方に、録音中のマーク（マイクの起動待ちは灰色、録音中は赤）と音量だけ）。エラーもここに短く出す。
 /// フルスクリーンのアプリの上にも出し、マウスのイベントは受けない
 final class HUD {
     private let panel: NSPanel
@@ -62,14 +62,20 @@ final class HUD {
         ])
     }
 
+    /// 押した直後に出す。マイクが動き出すまで（USB のマイクで約 550ms）は点を灰色にしておき、`markLive` で赤にする
     func showRecording() {
         hideWork?.cancel()
         meter.level = 0
         meter.isHidden = false
         label.isHidden = true
-        dot.layer?.backgroundColor = NSColor.systemRed.cgColor
+        dot.layer?.backgroundColor = NSColor.systemGray.cgColor
         place(width: 140)
         panel.orderFrontRegardless()
+    }
+
+    /// マイクが動き出した（ここから話した分が録音される）
+    func markLive() {
+        dot.layer?.backgroundColor = NSColor.systemRed.cgColor
     }
 
     func setLevel(_ level: Float) {

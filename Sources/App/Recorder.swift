@@ -1,8 +1,12 @@
 import AVFoundation
 
 /// マイクの録音。押下のたびに AVAudioEngine を作り直す（入力デバイスの切り替え・スリープ復帰で
-/// エンジンが黙って止まるのを避けるため。常時は動かさないので、メニューバーのマイク表示も録音中だけ出る）
+/// エンジンが黙って止まるのを避けるため。常時は動かさないので、メニューバーのマイク表示も録音中だけ出る）。
+/// エンジンの操作は専用の直列キューで行う: 入力デバイスの起動は USB の Studio Display のマイクで約 550ms かかり、
+/// メインで待つと HUD とイベントタップ（Mac 全体のキー入力）が止まる。直列なので、起動中に来た `stop` は起動のあとに走る
 final class Recorder {
+    private let queue = DispatchQueue(label: "pecha.recorder", qos: .userInteractive)
+    /// `queue` の上でだけ触る
     private var engine: AVAudioEngine?
     /// HUD に出す音量（0〜1）。メインスレッドで呼ぶ
     var onLevel: ((Float) -> Void)?
@@ -21,9 +25,27 @@ final class Recorder {
         }
     }
 
-    /// `onBuffer` は音声スレッドから呼ばれる（認識に渡す形式に変換済み）
-    func start(format: AVAudioFormat, onBuffer: @escaping (AVAudioPCMBuffer) -> Void) throws {
-        stop()
+    /// `onBuffer` は音声スレッドから呼ばれる（認識に渡す形式に変換済み）。
+    /// `completion` はマイクが動き出したら（失敗ならそのエラーで）メインスレッドで呼ばれる
+    func start(format: AVAudioFormat, onBuffer: @escaping (AVAudioPCMBuffer) -> Void,
+               completion: @escaping (Error?) -> Void) {
+        queue.async {
+            var failure: Error?
+            do {
+                try self.startEngine(format: format, onBuffer: onBuffer)
+            } catch {
+                failure = error
+            }
+            DispatchQueue.main.async { completion(failure) }
+        }
+    }
+
+    func stop() {
+        queue.async { self.stopEngine() }
+    }
+
+    private func startEngine(format: AVAudioFormat, onBuffer: @escaping (AVAudioPCMBuffer) -> Void) throws {
+        stopEngine()
         let engine = AVAudioEngine()
         let input = engine.inputNode
         let inputFormat = input.outputFormat(forBus: 0)
@@ -45,7 +67,7 @@ final class Recorder {
         Log.write("audio.started input=\(Int(inputFormat.sampleRate))Hz/\(inputFormat.channelCount)ch")
     }
 
-    func stop() {
+    private func stopEngine() {
         guard let engine else { return }
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()

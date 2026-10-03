@@ -63,6 +63,7 @@ pkill -x "Pecha Dev"
 - ⌘ を先に離しても Space のリピートが打ち込まれない
 - 誤認識を選択して右 ⌥ + 数字 → 正しい語を入れて Enter → その場で置き換わり、次の録音から直って出る
 - HUD と辞書パネルが、内蔵画面だけのとき・Studio Display を足した 2 枚のときの両方でマウスのある画面に出る
+- 押した瞬間に HUD が出る（点は灰色）→ マイクが動き出すと赤になる。Studio Display をつないでいて数秒空けた 1 回目でも、HUD が出るまで待たされない
 
 ## ログ
 
@@ -70,7 +71,7 @@ pkill -x "Pecha Dev"
 
 `launch` / `launch.already_running` / `menu.installed` / `permission ax= mic= prompt=` / `ax.trusted value= when=` / `mic.requesting` / `mic.answered` /
 `tap.created` / `tap.create_failed` / `tap.reenabled reason=timeout|user_input|watchdog|wake` / `system.woke` / `secure_input.on|off front=` /
-`hotkey.down` / `hotkey.up reason=space_up|cmd_up|lost ms=` / `record.start` / `record.stop reason= ms= discard=` / `record.blocked reason=mic|asr_not_ready` / `record.failed` / `audio.started input=` /
+`hotkey.down` / `hotkey.up reason=space_up|cmd_up|lost ms=` / `record.start` / `record.stop reason= ms= discard=` / `record.blocked reason=mic|asr_not_ready` / `record.failed error= current=` / `audio.started input=` /
 `asr.assets_installing` / `asr.ready ms= format=` / `asr.prepare_failed` / `asr.session_ready ms=` / `asr.done chars= finalize_ms=` / `asr.empty` / `asr.failed` /
 `paste.done what=dictation|dict_replace chars=` / `clipboard.restored what= rewrites=` / `clipboard.restore_skipped` /
 `hotkey.dictionary` / `dict.selection via=ax|menu|cmd_c|none chars=` / `dict.panel_opened` / `dict.panel_closed reason=submitted|escape|lost_focus|toggle` /
@@ -78,3 +79,24 @@ pkill -x "Pecha Dev"
 `update.started` / `update.disabled` / `login_item.registered` / `login_item.requires_approval` / `hook.transcribe`
 
 「押しても反応しない」ときは、開始音が鳴ったか（鳴らなければキーが届いていない）と、`tap.reenabled`・`secure_input.on`・`ax.trusted value=false` の有無を見る。
+
+「押してから録音が始まるまで遅い」ときは、`hotkey.down` から `audio.started` までの差を押下ごとに見る（マイクの起動時間。内蔵マイクで約 130ms、
+USB の Studio Display のマイクで約 550ms）。`hotkey.up ms=` はタップがキーを見た時刻からの長さなので、`hotkey.up` の時刻から引くと
+タップが押下を見た時刻が分かり、`hotkey.down` との差がメインスレッドの詰まりになる（効果音・マイクの起動をメインで待っていた頃は、
+出力デバイスが休止している 1 回目だけ約 450ms あった）:
+
+```bash
+python3 - <<'PY'
+import re, datetime
+ev = [(datetime.datetime.strptime(m[1], '%Y-%m-%d %H:%M:%S.%f').timestamp(), m[2], m[3])
+      for m in (re.match(r'(\S+ \S+) (\S+)(.*)', l) for l in open('/Users/d0ne1s/Library/Logs/pecha/pecha.log')) if m]
+for i, (t, n, _) in enumerate(ev):
+    if n != 'hotkey.down': continue
+    nxt = {n2: (t2, a2) for t2, n2, a2 in reversed(ev[i + 1:i + 12])}
+    if 'audio.started' not in nxt or 'hotkey.up' not in nxt: continue
+    tap = nxt['hotkey.up'][0] - int(re.search(r'ms=(\d+)', nxt['hotkey.up'][1])[1]) / 1000
+    print(datetime.datetime.fromtimestamp(t).strftime('%m-%d %H:%M:%S'),
+          f"tap→down={int((t - tap) * 1000)}ms down→audio={int((nxt['audio.started'][0] - t) * 1000)}ms")
+PY
+```
+
