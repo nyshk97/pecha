@@ -33,3 +33,4 @@ ad-hoc はリビルドごとにマイク・アクセシビリティ・Dropbox �
 - Dropbox（File Provider）の下のファイルに初めて触ると TCC の確認が出て、答えるまでその呼び出しが止まる。辞書のファイルにはメインスレッドで触らない（`DictionaryStore` の専用キュー）
 - 検証で `NSPasteboard` に書かない・ホットキーを合成しない（ユーザーのクリップボードと前面アプリを壊す）。確認は `--transcribe-file` で行う
 - 合成した ⌘V / ⌘C には `eventSourceUserData` に印（`KeySynth.marker`）を付け、自分のタップの状態遷移に入れない
+- dev版がホットキーに反応しない（ログが`permission ax=false`のままで`tap.created`が無い）ときは、`codesign -dvv "/Applications/Pecha Dev.app"`で`Signature=adhoc`になっていないかを見る。新しいMacでは`mise run signing`を自分のTerminalで一度実行するまでad-hocのまま。ad-hocのビルドでは、システム設定でONに見えても前のビルドへの許可なので、「−」で消してから許可し直す。許可が効いてから`ax.trusted value=true`が出るまで十数秒かかる
