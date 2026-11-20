@@ -31,6 +31,17 @@ enum Env {
     static let sharedDictionaryURL = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent("Library/CloudStorage/Dropbox/settings/pecha/dictionary.txt")
 
+    /// Haas のモデルの置き場（iCloud Drive。scripts/place-haas-model.py が置く）。dev 版も同じものを使う
+    static let haasSourceRoot = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs/Pecha/models", isDirectory: true)
+
+    /// Haas のコンパイル済みの置き場（Mac ごと・dev と常用で別）
+    static var haasCacheRoot: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(Bundle.main.bundleIdentifier ?? "io.github.nyshk97.pecha", isDirectory: true)
+            .appendingPathComponent("models", isDirectory: true)
+    }
+
     static let logURL: URL = {
         let dir = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Logs/pecha", isDirectory: true)

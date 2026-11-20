@@ -1,0 +1,11 @@
+Haas-ja-v1.0 Core ML
+Copyright 2026 Sanami
+
+1. Model weights (*.mlpackage, tokenizer.model)
+   Derived from Haas-ja-v1.0 by Third Intelligence (https://huggingface.co/third-intelligence/Haas-ja-v1.0), licensed under Apache-2.0.
+   Modifications by Sanami: converted to Core ML; encoder quantized to INT8 (weight-only).
+   This is an unofficial conversion, not created or endorsed by Third Intelligence.
+2. Code (swift/, python/)
+   Copyright 2026 Sanami, licensed under Apache-2.0.
+
+Both are distributed under the Apache License, Version 2.0 (see LICENSE).

@@ -67,7 +67,25 @@ run = "bash scripts/release.sh $usage_bump"
 [tasks.transcribe]
 description = "dev ビルドに音声ファイルを文字起こしさせて結果を表示する（マイク・ホットキーを使わない。辞書は一時ファイルを指せる）"
 usage = '''
+flag "--engine <engine>" help="haas か os（省略時はアプリと同じ選び方）"
+flag "--model-dir <dir>" help="Pecha/models/ と同じ形のフォルダ（iCloud Drive に触らずに確かめる。コンパイル先は一時フォルダ）"
 arg "<audio>" help="音声ファイル（say -v Kyoko -o x.aiff で作れる）"
 arg "[dictionary]" default="" help="辞書ファイル（省略時は空の一時ファイル。共有の辞書は読み書きしない）"
 '''
-run = "mise run build && bash scripts/transcribe-file.sh \"$usage_audio\" \"$usage_dictionary\""
+run = "mise run build && bash scripts/transcribe-file.sh ${usage_engine:+--engine \"$usage_engine\"} ${usage_model_dir:+--model-dir \"$usage_model_dir\"} \"$usage_audio\" \"$usage_dictionary\""
+
+[tasks.record-samples]
+description = "比べる用の例文（scripts/sample-sentences.txt の 6 本・1 分ほど）を 1 文ずつ読み上げて録音し、iCloud Drive の Pecha/samples/ に音声と正しい文を置く（自分の Terminal で。最初にマイクの許可が出る）"
+run = "swift -suppress-warnings scripts/record-samples.swift scripts/sample-sentences.txt"
+
+[tasks.compare]
+description = "自分の声のサンプル（iCloud Drive の Pecha/samples/）を OS の認識と Haas の両方で文字起こしして並べる（正しい文の .txt があれば違いを数える。本文は画面にだけ出す）"
+usage = '''
+arg "[samples]" default="" help="サンプルのフォルダ（省略時は iCloud Drive の Pecha/samples/）"
+'''
+run = "mise run build && python3 -I scripts/compare-engines.py \"$usage_samples\""
+
+[tasks.place-model]
+description = "Haas のモデルを Hugging Face から取って iCloud Drive の Pecha/models/ に置き、pecha-model.json をその版にする（版を入れ替えるとき）"
+usage = 'arg "<revision>" help="okayuji/Haas-ja-v1.0-CoreML-INT8 のコミット"'
+run = "python3 -I scripts/place-haas-model.py \"$usage_revision\""

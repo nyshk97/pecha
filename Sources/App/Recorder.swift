@@ -40,8 +40,12 @@ final class Recorder {
         }
     }
 
-    func stop() {
-        queue.async { self.stopEngine() }
+    /// `completion` はエンジンが止まってから（音声スレッドからの `onBuffer` がもう来なくなってから）メインスレッドで呼ばれる
+    func stop(completion: (() -> Void)? = nil) {
+        queue.async {
+            self.stopEngine()
+            if let completion { DispatchQueue.main.async(execute: completion) }
+        }
     }
 
     private func startEngine(format: AVAudioFormat, onBuffer: @escaping (AVAudioPCMBuffer) -> Void) throws {

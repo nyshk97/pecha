@@ -69,6 +69,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let dict = NSMenuItem(title: "辞書に登録: 誤認識を選択して \(Env.dictionaryLabel)", action: nil, keyEquivalent: "")
         dict.isEnabled = false
         menu.addItem(dict)
+        // どちらで認識するか（Haas が使えないときは OS の認識で動く。理由も出す）
+        let engine = NSMenuItem(title: app.controller.haas.label, action: nil, keyEquivalent: "")
+        engine.isEnabled = false
+        menu.addItem(engine)
 
         var notes = warnings
         if app.hotkeys.isSecureInput {
